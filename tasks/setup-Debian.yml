@@ -4,6 +4,7 @@
     name:
       - curl
       - apt-transport-https
+      - ca-certificates
     state: present
 
 - name: Add Jenkins apt repository key.
@@ -41,5 +42,6 @@
 - name: Ensure Jenkins is installed.
   apt:
     name: jenkins
+    update_cache: true
     state: "{{ jenkins_package_state }}"
   notify: configure default users

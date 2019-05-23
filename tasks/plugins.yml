@@ -59,3 +59,25 @@
   until: plugin_result is success
   retries: 3
   delay: 2
+
+- name: Install pinned Jenkins plugins using password.
+  jenkins_plugin:
+    name: "{{ item.name }}"
+    jenkins_home: "{{ jenkins_home }}"
+    url_username: "{{ jenkins_admin_username }}"
+    url_password: "{{ jenkins_admin_password }}"
+    state: "pinned"
+    timeout: "{{ jenkins_plugin_timeout }}"
+    updates_expiration: "{{ jenkins_plugin_updates_expiration }}"
+    updates_url: "{{ jenkins_updates_url }}"
+    url: "http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix }}"
+    version: "{{ item.version }}"
+    with_dependencies: "{{ jenkins_plugins_install_dependencies }}"
+  with_items: "{{ jenkins_plugins_pinned }}"
+  when: jenkins_admin_password != ""
+  notify: restart jenkins
+  tags: ['skip_ansible_lint']
+  register: plugin_pinned_result
+  until: plugin_pinned_result is success
+  retries: 3
+  delay: 2
